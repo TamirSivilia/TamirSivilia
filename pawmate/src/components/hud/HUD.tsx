@@ -1,12 +1,13 @@
+import { useTranslation } from 'react-i18next';
 import { usePetStore } from '@/store/petStore.ts';
 import { useEconomyStore } from '@/store/economyStore.ts';
 import { useUIStore } from '@/store/uiStore.ts';
 import { PremiumBadge } from '@/components/common/PremiumBadge.tsx';
 import { StatBar } from './StatBar.tsx';
 import { getXpForNextLevel } from '@/lib/decay.ts';
-import { t } from '@/lib/i18n.ts';
 
 export function HUD() {
+  const { t } = useTranslation();
   const pet = usePetStore(s => s.pet);
   const coins = useEconomyStore(s => s.coins);
   const gems = useEconomyStore(s => s.gems);
@@ -15,7 +16,8 @@ export function HUD() {
   if (!pet) return null;
 
   const xpForNext = getXpForNextLevel(pet.level);
-  const xpPct = ((pet.xp - (xpForNext / 2)) / (xpForNext - xpForNext / 2)) * 100;
+  const prevThreshold = getXpForNextLevel(pet.level - 1);
+  const xpPct = ((pet.xp - prevThreshold) / (xpForNext - prevThreshold)) * 100;
 
   return (
     <div className="bg-gray-900/95 backdrop-blur-sm px-4 pt-3 pb-2 border-b border-gray-700/50">
@@ -24,7 +26,7 @@ export function HUD() {
         <div className="flex items-center gap-2">
           <div className="text-sm font-bold text-white">{pet.name}</div>
           <div className="text-xs bg-purple-600/50 text-purple-200 px-2 py-0.5 rounded-full">
-            {t.stats.level} <span className="ltr-num">{pet.level}</span>
+            {t('stats.level')} <span className="ltr-num">{pet.level}</span>
           </div>
           <PremiumBadge />
         </div>
@@ -51,7 +53,7 @@ export function HUD() {
       {/* XP bar */}
       <div className="mb-2">
         <div className="flex justify-between text-xs text-gray-500 mb-1">
-          <span>{t.stats.xp}</span>
+          <span>{t('stats.xp')}</span>
           <span className="ltr-num">{pet.xp} / {xpForNext}</span>
         </div>
         <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
@@ -64,12 +66,12 @@ export function HUD() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <StatBar label={t.stats.hunger} value={pet.hunger} color="#f97316" emoji="🍖" />
-        <StatBar label={t.stats.happiness} value={pet.happiness} color="#eab308" emoji="😊" />
-        <StatBar label={t.stats.energy} value={pet.energy} color="#3b82f6" emoji="⚡" />
-        <StatBar label={t.stats.hygiene} value={pet.hygiene} color="#22c55e" emoji="🛁" />
-        <StatBar label={t.stats.health} value={pet.health} color="#ec4899" emoji="❤️" />
-        <StatBar label={t.stats.bond} value={pet.bond} color="#a855f7" emoji="🔗" />
+        <StatBar label={t('stats.hunger')} value={pet.hunger} color="#f97316" emoji="🍖" />
+        <StatBar label={t('stats.happiness')} value={pet.happiness} color="#eab308" emoji="😊" />
+        <StatBar label={t('stats.energy')} value={pet.energy} color="#3b82f6" emoji="⚡" />
+        <StatBar label={t('stats.hygiene')} value={pet.hygiene} color="#22c55e" emoji="🛁" />
+        <StatBar label={t('stats.health')} value={pet.health} color="#ec4899" emoji="❤️" />
+        <StatBar label={t('stats.bond')} value={pet.bond} color="#a855f7" emoji="🔗" />
       </div>
     </div>
   );

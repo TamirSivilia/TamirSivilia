@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth.ts';
 import { useUserStore } from '@/store/userStore.ts';
 import { usePetStore } from '@/store/petStore.ts';
@@ -9,11 +8,10 @@ import { Login } from '@/pages/Login.tsx';
 import { Onboarding } from '@/pages/Onboarding.tsx';
 import { Home } from '@/pages/Home.tsx';
 
-// Initialize analytics once
 initAnalytics();
 
 export default function App() {
-  useAuth(); // Sets up auth subscription
+  useAuth();
 
   const isLoading = useUserStore(s => s.isLoading);
   const user = useUserStore(s => s.user);

@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth.ts';
-import { t } from '@/lib/i18n.ts';
 
 type AuthMode = 'choose' | 'login' | 'signup';
 
 export function Login() {
+  const { t } = useTranslation();
   const { signInAsGuest, signInWithEmail, signUpWithEmail } = useAuth();
   const [mode, setMode] = useState<AuthMode>('choose');
   const [email, setEmail] = useState('');
@@ -17,8 +18,8 @@ export function Login() {
     setError('');
     try {
       await signInAsGuest();
-    } catch (e) {
-      setError(t.auth.authError);
+    } catch {
+      setError(t('auth.authError'));
       setLoading(false);
     }
   };
@@ -34,7 +35,7 @@ export function Login() {
         await signUpWithEmail(email, password);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t.auth.authError;
+      const msg = err instanceof Error ? err.message : t('auth.authError');
       setError(msg);
       setLoading(false);
     }
@@ -46,12 +47,11 @@ export function Login() {
       <div className="mb-8 text-center">
         <div className="text-7xl mb-3">🐾</div>
         <h1 className="text-4xl font-bold text-white mb-1">Pawmate</h1>
-        <p className="text-gray-400 text-sm">{t.app.tagline}</p>
+        <p className="text-gray-400 text-sm">{t('app.tagline')}</p>
       </div>
 
       {mode === 'choose' && (
         <div className="w-full max-w-sm space-y-3">
-          {/* Guest play — primary CTA */}
           <button
             onClick={handleGuest}
             disabled={loading}
@@ -60,39 +60,30 @@ export function Login() {
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>{t.app.loading}</span>
+                <span>{t('app.loading')}</span>
               </div>
             ) : (
-              <>🎮 {t.auth.guestPlay}</>
+              <>🎮 {t('auth.guestPlay')}</>
             )}
           </button>
 
-          <div className="text-center text-gray-500 text-sm">{t.auth.orContinueWith}</div>
+          <div className="text-center text-gray-500 text-sm">{t('auth.orContinueWith')}</div>
 
-          <button
-            onClick={() => setMode('login')}
-            className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-2xl font-semibold transition-colors"
-          >
-            ✉️ {t.auth.login}
+          <button onClick={() => setMode('login')} className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-2xl font-semibold transition-colors">
+            ✉️ {t('auth.login')}
+          </button>
+          <button onClick={() => setMode('signup')} className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-2xl font-semibold transition-colors">
+            🆕 {t('auth.signup')}
           </button>
 
-          <button
-            onClick={() => setMode('signup')}
-            className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-2xl font-semibold transition-colors"
-          >
-            🆕 {t.auth.signup}
-          </button>
-
-          <p className="text-center text-xs text-gray-600 mt-4 px-4">
-            {t.auth.guestWarning}
-          </p>
+          <p className="text-center text-xs text-gray-600 mt-4 px-4">{t('auth.guestWarning')}</p>
         </div>
       )}
 
       {(mode === 'login' || mode === 'signup') && (
         <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-3">
           <h2 className="text-xl font-bold text-center mb-4">
-            {mode === 'login' ? t.auth.loginTitle : t.auth.signupTitle}
+            {mode === 'login' ? t('auth.loginTitle') : t('auth.signupTitle')}
           </h2>
 
           {error && (
@@ -103,16 +94,15 @@ export function Login() {
 
           <input
             type="email"
-            placeholder={t.auth.email}
+            placeholder={t('auth.email')}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
             className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
           />
-
           <input
             type="password"
-            placeholder={t.auth.password}
+            placeholder={t('auth.password')}
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
@@ -128,35 +118,20 @@ export function Login() {
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>{t.app.loading}</span>
+                <span>{t('app.loading')}</span>
               </div>
-            ) : mode === 'login' ? t.auth.login : t.auth.signup}
+            ) : mode === 'login' ? t('auth.login') : t('auth.signup')}
           </button>
 
           <div className="text-center text-sm text-gray-400">
             {mode === 'login' ? (
-              <>
-                {t.auth.noAccount}{' '}
-                <button type="button" onClick={() => setMode('signup')} className="text-purple-400 font-semibold">
-                  {t.auth.signup}
-                </button>
-              </>
+              <>{t('auth.noAccount')}{' '}<button type="button" onClick={() => setMode('signup')} className="text-purple-400 font-semibold">{t('auth.signup')}</button></>
             ) : (
-              <>
-                {t.auth.hasAccount}{' '}
-                <button type="button" onClick={() => setMode('login')} className="text-purple-400 font-semibold">
-                  {t.auth.login}
-                </button>
-              </>
+              <>{t('auth.hasAccount')}{' '}<button type="button" onClick={() => setMode('login')} className="text-purple-400 font-semibold">{t('auth.login')}</button></>
             )}
           </div>
-
-          <button
-            type="button"
-            onClick={() => setMode('choose')}
-            className="w-full py-2 text-gray-500 text-sm"
-          >
-            ← {t.app.back}
+          <button type="button" onClick={() => setMode('choose')} className="w-full py-2 text-gray-500 text-sm">
+            ← {t('app.back')}
           </button>
         </form>
       )}

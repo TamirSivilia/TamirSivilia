@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePet } from '@/hooks/usePet.ts';
 import { useUIStore } from '@/store/uiStore.ts';
-import { t } from '@/lib/i18n.ts';
 
 interface ActionButtonProps {
   label: string;
@@ -20,10 +20,7 @@ function ActionButton({ label, emoji, onPress, cooldownMs = 0, disabled }: Actio
     const interval = setInterval(() => {
       setRemaining(prev => {
         const next = prev - 1000;
-        if (next <= 0) {
-          clearInterval(interval);
-          return 0;
-        }
+        if (next <= 0) { clearInterval(interval); return 0; }
         return next;
       });
     }, 1000);
@@ -57,15 +54,16 @@ function ActionButton({ label, emoji, onPress, cooldownMs = 0, disabled }: Actio
 }
 
 export function ActionBar() {
-  const { pet, cooldowns, isSleeping, isOnCooldown, getCooldownRemaining, feed, play, sleep } = usePet();
-  const { setScene, openShop } = useUIStore();
+  const { t } = useTranslation();
+  const { pet, isSleeping, isOnCooldown, getCooldownRemaining, feed, play, sleep } = usePet();
+  const { setScene, openShop, addToast } = useUIStore();
 
   if (!pet) return null;
 
   const handleWalk = () => {
     if (isOnCooldown('walk')) return;
     if (pet.energy < 15) {
-      useUIStore.getState().addToast(t.actions.noEnergy, 'error', '😴');
+      addToast(t('actions.noEnergy'), 'error', '😴');
       return;
     }
     setScene('walk');
@@ -76,37 +74,37 @@ export function ActionBar() {
       {isSleeping ? (
         <div className="flex items-center justify-center gap-2 py-2">
           <span className="text-2xl">😴</span>
-          <span className="text-gray-300 font-medium">{t.actions.sleeping}</span>
+          <span className="text-gray-300 font-medium">{t('actions.sleeping')}</span>
         </div>
       ) : (
         <div className="flex justify-around gap-2">
           <ActionButton
-            label={t.actions.feed}
+            label={t('actions.feed')}
             emoji="🍖"
             onPress={() => feed()}
             cooldownMs={isOnCooldown('feed') ? getCooldownRemaining('feed') : 0}
           />
           <ActionButton
-            label={t.actions.play}
+            label={t('actions.play')}
             emoji="🎾"
             onPress={play}
             cooldownMs={isOnCooldown('play') ? getCooldownRemaining('play') : 0}
             disabled={pet.energy < 10}
           />
           <ActionButton
-            label={t.actions.walk}
+            label={t('actions.walk')}
             emoji="🐾"
             onPress={handleWalk}
             cooldownMs={isOnCooldown('walk') ? getCooldownRemaining('walk') : 0}
             disabled={pet.energy < 15}
           />
           <ActionButton
-            label={t.actions.sleep}
+            label={t('actions.sleep')}
             emoji="💤"
             onPress={sleep}
           />
           <ActionButton
-            label={t.economy.shop}
+            label={t('economy.shop')}
             emoji="🛍️"
             onPress={openShop}
           />

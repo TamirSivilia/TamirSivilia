@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Phaser from 'phaser';
 import { createPhaserConfig } from '@/game/config.ts';
 import { HUD } from '@/components/hud/HUD.tsx';
@@ -12,19 +13,18 @@ import { usePet } from '@/hooks/usePet.ts';
 import { useDecay } from '@/hooks/useDecay.ts';
 import { analytics } from '@/lib/analytics.ts';
 import { GUEST_NUDGE_DELAY_MS } from '@/data/constants.ts';
-import { t } from '@/lib/i18n.ts';
 
 export function Home() {
+  const { t } = useTranslation();
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { currentScene, setScene, openSettings, addToast, setShowGuestNudge } = useUIStore();
+  const { currentScene, setScene, openSettings, setShowGuestNudge } = useUIStore();
   const { isGuest, guestNudgeShown, setGuestNudgeShown, user } = useUserStore();
   const { completedWalk } = usePet();
-  const [showLogin, setShowLogin] = useState(false);
 
   useDecay();
 
-  // Initialize Phaser
+  // Initialize Phaser once
   useEffect(() => {
     if (!containerRef.current || gameRef.current) return;
 
@@ -40,12 +40,12 @@ export function Home() {
     };
   }, []);
 
-  // Handle scene changes (walk -> home)
+  // Walk completed — apply stat effects
   useEffect(() => {
-    if (currentScene === 'home' && gameRef.current) {
-      // Walk completed — apply effects
+    if (currentScene === 'home') {
       completedWalk();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentScene]);
 
   // Guest nudge after 10 minutes
@@ -61,7 +61,6 @@ export function Home() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Top HUD */}
       <HUD />
 
       {/* Settings button */}
@@ -75,38 +74,20 @@ export function Home() {
       </div>
 
       {/* Phaser Game Canvas */}
-      <div
-        ref={containerRef}
-        id="game-canvas"
-        className="flex-1 w-full"
-      />
+      <div ref={containerRef} id="game-canvas" className="flex-1 w-full" />
 
       {/* Bottom hint */}
       {currentScene === 'home' && (
         <div className="text-center text-xs text-gray-600 py-1">
-          {t.misc.tapForLove}
+          {t('misc.tapForLove')}
         </div>
       )}
 
-      {/* Action Bar */}
       <ActionBar />
 
-      {/* Modals */}
       <ShopModal />
       <SettingsModal />
-      <GuestNudgeModal onUpgrade={() => setShowLogin(true)} />
-
-      {/* Inline login upgrade (shown when guest nudge is accepted) */}
-      {showLogin && (
-        <div className="modal-backdrop" onClick={() => setShowLogin(false)}>
-          <div className="modal-sheet" onClick={e => e.stopPropagation()}>
-            <p className="text-center text-gray-400 text-sm py-8">{t.auth.guestNudgeDesc}</p>
-            <button onClick={() => setShowLogin(false)} className="w-full py-3 bg-gray-700 rounded-2xl">
-              {t.app.cancel}
-            </button>
-          </div>
-        </div>
-      )}
+      <GuestNudgeModal onUpgrade={() => { /* navigate to login upgrade */ }} />
     </div>
   );
 }

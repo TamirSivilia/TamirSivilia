@@ -1,10 +1,12 @@
-import { t } from '@/lib/i18n.ts';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   message?: string;
 }
 
 export function LoadingScreen({ message }: Props) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-gray-900 gap-4">
       <div className="text-5xl animate-bounce">🐾</div>
@@ -18,12 +20,7 @@ export function LoadingScreen({ message }: Props) {
           />
         ))}
       </div>
-      {message && (
-        <p className="text-gray-400 text-sm mt-2">{message}</p>
-      )}
-      {!message && (
-        <p className="text-gray-400 text-sm mt-2">{t.app.loading}</p>
-      )}
+      <p className="text-gray-400 text-sm mt-2">{message ?? t('app.loading')}</p>
     </div>
   );
 }

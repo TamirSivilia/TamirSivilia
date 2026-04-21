@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/store/uiStore.ts';
 import { useEconomyStore } from '@/store/economyStore.ts';
 import { useUserStore } from '@/store/userStore.ts';
@@ -6,12 +7,12 @@ import { FOODS } from '@/data/foods.ts';
 import { TOYS } from '@/data/toys.ts';
 import { ads } from '@/lib/ads.ts';
 import { analytics } from '@/lib/analytics.ts';
-import { t } from '@/lib/i18n.ts';
 import { AD_REWARD_COINS } from '@/data/constants.ts';
 
 type Tab = 'food' | 'toys';
 
 export function ShopModal() {
+  const { t } = useTranslation();
   const { shopOpen, closeShop, addToast } = useUIStore();
   const { coins, gems, spendCoins, spendGems, addCoins, addInventoryItem, logTransaction } = useEconomyStore();
   const { user } = useUserStore();
@@ -25,21 +26,15 @@ export function ShopModal() {
     analytics.itemViewed(food.id, user?.id);
 
     if (food.currency === 'coins') {
-      if (coins < food.cost) {
-        addToast(t.economy.notEnoughCoins, 'error');
-        return;
-      }
+      if (coins < food.cost) { addToast(t('economy.notEnoughCoins'), 'error'); return; }
       spendCoins(food.cost);
     } else {
-      if (gems < food.cost) {
-        addToast(t.economy.notEnoughGems, 'error');
-        return;
-      }
+      if (gems < food.cost) { addToast(t('economy.notEnoughGems'), 'error'); return; }
       spendGems(food.cost);
     }
 
     addInventoryItem(food.id, 'food');
-    addToast(t.economy.purchased, 'success', food.emoji);
+    addToast(t('economy.purchased'), 'success', food.emoji);
     logTransaction('purchase', food.id, food.currency, food.cost);
     analytics.purchaseSuccess(food.id, food.currency, food.cost, user?.id);
   };
@@ -48,21 +43,15 @@ export function ShopModal() {
     analytics.purchaseIntent(toy.id, user?.id);
 
     if (toy.currency === 'coins') {
-      if (coins < toy.cost) {
-        addToast(t.economy.notEnoughCoins, 'error');
-        return;
-      }
+      if (coins < toy.cost) { addToast(t('economy.notEnoughCoins'), 'error'); return; }
       spendCoins(toy.cost);
     } else {
-      if (gems < toy.cost) {
-        addToast(t.economy.notEnoughGems, 'error');
-        return;
-      }
+      if (gems < toy.cost) { addToast(t('economy.notEnoughGems'), 'error'); return; }
       spendGems(toy.cost);
     }
 
     addInventoryItem(toy.id, 'toy');
-    addToast(t.economy.purchased, 'success', toy.emoji);
+    addToast(t('economy.purchased'), 'success', toy.emoji);
     logTransaction('purchase', toy.id, toy.currency, toy.cost);
     analytics.purchaseSuccess(toy.id, toy.currency, toy.cost, user?.id);
   };
@@ -74,7 +63,7 @@ export function ShopModal() {
       const result = await ads.showRewardedAd('shop_reward');
       if (result.success) {
         addCoins(AD_REWARD_COINS);
-        addToast(t.economy.adReward, 'reward', '🎉');
+        addToast(t('economy.adReward'), 'reward', '🎉');
         logTransaction('ad_reward', 'rewarded_video', 'coins', AD_REWARD_COINS);
         analytics.adCompleted('shop_reward', user?.id);
         analytics.adRewardClaimed({ type: 'coins', amount: AD_REWARD_COINS }, user?.id);
@@ -89,7 +78,7 @@ export function ShopModal() {
       <div className="modal-sheet" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">{t.economy.shopTitle}</h2>
+          <h2 className="text-xl font-bold">{t('economy.shopTitle')}</h2>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-sm">
               <span>🪙</span>
@@ -112,13 +101,10 @@ export function ShopModal() {
           {adLoading ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>{t.economy.adLoading}</span>
+              <span>{t('economy.adLoading')}</span>
             </>
           ) : (
-            <>
-              <span>📺</span>
-              <span>{t.economy.watchAd}</span>
-            </>
+            <><span>📺</span><span>{t('economy.watchAd')}</span></>
           )}
         </button>
 
@@ -128,13 +114,13 @@ export function ShopModal() {
             onClick={() => setTab('food')}
             className={`flex-1 py-2 rounded-xl font-semibold text-sm transition-colors ${tab === 'food' ? 'bg-orange-500 text-white' : 'bg-gray-700 text-gray-300'}`}
           >
-            🍖 {t.shop.food}
+            🍖 {t('shop.food')}
           </button>
           <button
             onClick={() => setTab('toys')}
             className={`flex-1 py-2 rounded-xl font-semibold text-sm transition-colors ${tab === 'toys' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300'}`}
           >
-            🎾 {t.shop.toys}
+            🎾 {t('shop.toys')}
           </button>
         </div>
 
@@ -145,12 +131,12 @@ export function ShopModal() {
               <span className="text-3xl">{food.emoji}</span>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm">{t.shop[food.nameKey as keyof typeof t.shop]}</span>
+                  <span className="font-semibold text-sm">{t(`shop.${food.nameKey}`)}</span>
                   {food.currency === 'gems' && (
-                    <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/30">{t.economy.premium}</span>
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/30">{t('economy.premium')}</span>
                   )}
                 </div>
-                <span className="text-xs text-gray-400">{t.shop[food.descKey as keyof typeof t.shop]}</span>
+                <span className="text-xs text-gray-400">{t(`shop.${food.descKey}`)}</span>
               </div>
               <button
                 onClick={() => handleBuyFood(food)}
@@ -167,12 +153,12 @@ export function ShopModal() {
               <span className="text-3xl">{toy.emoji}</span>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm">{t.shop[toy.nameKey as keyof typeof t.shop]}</span>
+                  <span className="font-semibold text-sm">{t(`shop.${toy.nameKey}`)}</span>
                   {toy.currency === 'gems' && (
-                    <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/30">{t.economy.premium}</span>
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/30">{t('economy.premium')}</span>
                   )}
                 </div>
-                <span className="text-xs text-gray-400">{t.shop[toy.descKey as keyof typeof t.shop]}</span>
+                <span className="text-xs text-gray-400">{t(`shop.${toy.descKey}`)}</span>
               </div>
               <button
                 onClick={() => handleBuyToy(toy)}

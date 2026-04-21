@@ -6,7 +6,7 @@
 
 @layer base {
   html {
-    direction: rtl;
+    /* direction is set dynamically by i18n.ts based on selected language */
     font-family: 'Rubik', 'Assistant', sans-serif;
   }
 

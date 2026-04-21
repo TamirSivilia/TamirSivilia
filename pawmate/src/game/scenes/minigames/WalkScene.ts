@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
+import i18n from '@/lib/i18n.ts';
 import { useUIStore } from '@/store/uiStore.ts';
 import { usePetStore } from '@/store/petStore.ts';
 import { WALK_MINIGAME_DURATION_SEC } from '@/data/constants.ts';
-import { t } from '@/lib/i18n.ts';
 import { getAnimalDef } from '@/data/animals.ts';
 
 interface Obstacle {
@@ -21,9 +21,8 @@ export class WalkScene extends Phaser.Scene {
   private timeLeft = WALK_MINIGAME_DURATION_SEC;
   private timerText!: Phaser.GameObjects.Text;
   private distanceText!: Phaser.GameObjects.Text;
-  private progressBar!: Phaser.GameObjects.Graphics;
   private progressFill!: Phaser.GameObjects.Graphics;
-  private petProgress = 0;  // 0-1 how far along the path
+  private petProgress = 0;
   private gameOver = false;
   private countdownTimer?: Phaser.Time.TimerEvent;
   private obstacleTimer?: Phaser.Time.TimerEvent;
@@ -56,7 +55,6 @@ export class WalkScene extends Phaser.Scene {
     this.buildHUD(width, height);
     this.startGame();
 
-    // Input
     this.input.on('pointermove', this.handleDrag, this);
     this.input.on('pointerdown', this.handlePointerDown, this);
     this.input.on('pointerup', () => { this.isDragging = false; });
@@ -69,16 +67,13 @@ export class WalkScene extends Phaser.Scene {
     bg.fillStyle(0x4a7c59);
     bg.fillRect(0, height * 0.6, width, height * 0.4);
 
-    // Sun
     bg.fillStyle(0xFFD700);
     bg.fillCircle(width - 50, 50, 30);
 
-    // Clouds
     bg.fillStyle(0xffffff, 0.8);
     bg.fillEllipse(80, 60, 80, 35);
     bg.fillEllipse(110, 50, 60, 30);
     bg.fillEllipse(55, 55, 50, 28);
-
     bg.fillEllipse(width * 0.5, 80, 70, 30);
     bg.fillEllipse(width * 0.5 + 25, 72, 55, 28);
   }
@@ -87,15 +82,12 @@ export class WalkScene extends Phaser.Scene {
     const path = this.add.graphics();
     path.fillStyle(0x8B7355);
     path.fillRect(0, this.pathY - this.PATH_HEIGHT / 2, width, this.PATH_HEIGHT);
-    // Path lines
     path.lineStyle(2, 0x6b5a3e, 0.5);
     path.lineBetween(0, this.pathY, width, this.pathY);
 
-    // Goal line
     this.goalLine = this.add.graphics();
     this.goalLine.lineStyle(4, 0xFFD700);
     this.goalLine.lineBetween(width - 30, this.pathY - 60, width - 30, this.pathY + 60);
-    // Flag
     this.goalLine.fillStyle(0xFF0000);
     this.goalLine.fillTriangle(width - 30, this.pathY - 60, width - 10, this.pathY - 48, width - 30, this.pathY - 36);
   }
@@ -107,10 +99,9 @@ export class WalkScene extends Phaser.Scene {
     this.petGfx = this.add.graphics();
     this.drawMiniPet();
 
-    // Progress bar background
-    this.progressBar = this.add.graphics();
-    this.progressBar.fillStyle(0x333333, 0.7);
-    this.progressBar.fillRoundedRect(20, 20, width - 40, 14, 7);
+    const progressBar = this.add.graphics();
+    progressBar.fillStyle(0x333333, 0.7);
+    progressBar.fillRoundedRect(20, 20, width - 40, 14, 7);
 
     this.progressFill = this.add.graphics();
   }
@@ -120,14 +111,12 @@ export class WalkScene extends Phaser.Scene {
     this.petGfx.fillStyle(this.petColor);
     this.petGfx.fillCircle(this.petX, this.petY - 12, 16);
     this.petGfx.fillEllipse(this.petX, this.petY + 2, 28, 20);
-    // Eyes
     this.petGfx.fillStyle(0x1a1a1a);
     this.petGfx.fillCircle(this.petX - 5, this.petY - 15, 3);
     this.petGfx.fillCircle(this.petX + 5, this.petY - 15, 3);
   }
 
   private buildHUD(width: number, height: number) {
-    // Timer
     this.timerText = this.add.text(width / 2, 44, `${this.timeLeft}`, {
       fontFamily: 'Rubik, sans-serif',
       fontSize: '22px',
@@ -136,8 +125,7 @@ export class WalkScene extends Phaser.Scene {
       strokeThickness: 3,
     }).setOrigin(0.5);
 
-    // Distance
-    this.distanceText = this.add.text(width / 2, height - 50, `${t.walk.distance}: 0 ${t.walk.meters}`, {
+    this.distanceText = this.add.text(width / 2, height - 50, `${i18n.t('walk.distance')}: 0 ${i18n.t('walk.meters')}`, {
       fontFamily: 'Rubik, sans-serif',
       fontSize: '16px',
       color: '#ffffff',
@@ -145,8 +133,7 @@ export class WalkScene extends Phaser.Scene {
       strokeThickness: 2,
     }).setOrigin(0.5);
 
-    // Instruction
-    this.add.text(width / 2, height - 20, t.walk.dragPet, {
+    this.add.text(width / 2, height - 20, i18n.t('walk.dragPet'), {
       fontFamily: 'Rubik, sans-serif',
       fontSize: '13px',
       color: '#ffffaa',
@@ -160,8 +147,6 @@ export class WalkScene extends Phaser.Scene {
       callbackScope: this,
       loop: true,
     });
-
-    // Spawn obstacles
     this.obstacleTimer = this.time.addEvent({
       delay: 2500,
       callback: this.spawnObstacle,
@@ -174,9 +159,7 @@ export class WalkScene extends Phaser.Scene {
     if (this.gameOver) return;
     this.timeLeft--;
     this.timerText.setText(`${this.timeLeft}`);
-    if (this.timeLeft <= 0) {
-      this.endGame(false);
-    }
+    if (this.timeLeft <= 0) this.endGame(false);
   }
 
   private spawnObstacle() {
@@ -190,16 +173,13 @@ export class WalkScene extends Phaser.Scene {
     gfx.fillCircle(-4, -4, 6);
     gfx.x = width + 20;
     gfx.y = y;
-
     this.obstacles.push({ gfx, x: width + 20, speed: 180 + Phaser.Math.Between(0, 80) });
   }
 
   private handlePointerDown(pointer: Phaser.Input.Pointer) {
     const dx = pointer.x - this.petX;
     const dy = pointer.y - this.petY;
-    if (Math.sqrt(dx * dx + dy * dy) < 40) {
-      this.isDragging = true;
-    }
+    if (Math.sqrt(dx * dx + dy * dy) < 40) this.isDragging = true;
   }
 
   private handleDrag(pointer: Phaser.Input.Pointer) {
@@ -213,25 +193,17 @@ export class WalkScene extends Phaser.Scene {
       this.distanceMoved += pointer.x - prevX;
       this.petProgress = Phaser.Math.Clamp(this.petX / (width - 60), 0, 1);
     }
-
-    this.distanceText.setText(`${t.walk.distance}: ${Math.floor(this.distanceMoved / 10)} ${t.walk.meters}`);
+    this.distanceText.setText(`${i18n.t('walk.distance')}: ${Math.floor(this.distanceMoved / 10)} ${i18n.t('walk.meters')}`);
   }
 
   private checkCollisions() {
     for (const obs of this.obstacles) {
       const dx = obs.x - this.petX;
       const dy = obs.gfx.y - this.petY;
-      if (Math.sqrt(dx * dx + dy * dy) < 28) {
-        this.endGame(false);
-        return;
-      }
+      if (Math.sqrt(dx * dx + dy * dy) < 28) { this.endGame(false); return; }
     }
-
-    // Check if reached goal
     const { width } = this.cameras.main;
-    if (this.petX >= width - 50) {
-      this.endGame(true);
-    }
+    if (this.petX >= width - 50) this.endGame(true);
   }
 
   private endGame(success: boolean) {
@@ -246,18 +218,14 @@ export class WalkScene extends Phaser.Scene {
     overlay.fillStyle(0x000000, 0.6);
     overlay.fillRect(0, 0, width, height);
 
-    const msg = success ? t.walk.success : t.walk.fail;
-    const color = success ? '#FFD700' : '#FF6B6B';
-
-    this.add.text(width / 2, height / 2 - 20, msg, {
+    this.add.text(width / 2, height / 2 - 20, success ? i18n.t('walk.success') : i18n.t('walk.fail'), {
       fontFamily: 'Rubik, sans-serif',
       fontSize: '36px',
-      color,
+      color: success ? '#FFD700' : '#FF6B6B',
       stroke: '#000000',
       strokeThickness: 4,
     }).setOrigin(0.5);
 
-    // Notify React layer — use already-imported store
     this.time.delayedCall(1500, () => {
       this.scene.start('HomeScene');
       useUIStore.getState().setScene('home');
@@ -266,32 +234,21 @@ export class WalkScene extends Phaser.Scene {
 
   update(_time: number, delta: number) {
     if (this.gameOver) return;
-
     const { width } = this.cameras.main;
 
-    // Move obstacles left
     for (const obs of this.obstacles) {
       obs.x -= (obs.speed * delta) / 1000;
       obs.gfx.x = obs.x;
     }
-
-    // Remove off-screen obstacles
     this.obstacles = this.obstacles.filter(obs => {
-      if (obs.x < -30) {
-        obs.gfx.destroy();
-        return false;
-      }
+      if (obs.x < -30) { obs.gfx.destroy(); return false; }
       return true;
     });
 
-    // Update pet graphic
     this.drawMiniPet();
-
-    // Update progress bar
     this.progressFill.clear();
     this.progressFill.fillStyle(0xff6b6b);
     this.progressFill.fillRoundedRect(20, 20, (width - 40) * this.petProgress, 14, 7);
-
     this.checkCollisions();
   }
 }

@@ -1,11 +1,11 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/lib/supabase.ts';
 import { usePetStore } from '@/store/petStore.ts';
 import { useUserStore } from '@/store/userStore.ts';
 import { useEconomyStore } from '@/store/economyStore.ts';
 import { getRandomPhase1Animal, getRandomDefaultName } from '@/data/animals.ts';
 import { analytics } from '@/lib/analytics.ts';
-import { t } from '@/lib/i18n.ts';
 import type { Pet } from '@/store/petStore.ts';
 
 const SPECIES_EMOJIS: Record<string, string> = {
@@ -15,21 +15,21 @@ const SPECIES_EMOJIS: Record<string, string> = {
 };
 
 export function Onboarding() {
+  const { t } = useTranslation();
   const { setPet } = usePetStore();
   const { user } = useUserStore();
   const { setEconomy } = useEconomyStore();
-  const animalDef = getRandomPhase1Animal();
-  const [name, setName] = useState(getRandomDefaultName(animalDef.species));
+  const [animalDef] = useState(() => getRandomPhase1Animal());
+  const [name, setName] = useState(() => getRandomDefaultName(animalDef.species));
   const [nameError, setNameError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const speciesEmoji = SPECIES_EMOJIS[animalDef.species] ?? '🐾';
-  const rarityLabel = t.pet[animalDef.rarity as keyof typeof t.pet] ?? animalDef.rarity;
 
   const validateName = (val: string) => {
-    if (!val.trim()) return t.onboarding.nameRequired;
-    if (val.trim().length < 2) return t.onboarding.nameTooShort;
-    if (val.trim().length > 20) return t.onboarding.nameTooLong;
+    if (!val.trim()) return t('onboarding.nameRequired');
+    if (val.trim().length < 2) return t('onboarding.nameTooShort');
+    if (val.trim().length > 20) return t('onboarding.nameTooLong');
     return '';
   };
 
@@ -42,7 +42,6 @@ export function Onboarding() {
     setNameError('');
 
     try {
-      // Create the pet record in DB
       const { data: petData, error } = await supabase.from('pets').insert({
         user_id: user.id,
         name: name.trim(),
@@ -83,11 +82,10 @@ export function Onboarding() {
 
       setPet(pet);
       setEconomy(100, 5, user.id);
-
       analytics.onboardingCompleted(user.id);
       analytics.petNamed(name.trim(), user.id);
     } catch {
-      setNameError(t.app.error);
+      setNameError(t('app.error'));
     } finally {
       setLoading(false);
     }
@@ -96,38 +94,29 @@ export function Onboarding() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-gray-900 px-6">
       <div className="w-full max-w-sm text-center">
-        <h1 className="text-2xl font-bold mb-2">{t.onboarding.welcomeTitle}</h1>
-        <p className="text-gray-400 text-sm mb-8">{t.onboarding.welcomeSubtitle}</p>
+        <h1 className="text-2xl font-bold mb-2">{t('onboarding.welcomeTitle')}</h1>
+        <p className="text-gray-400 text-sm mb-8">{t('onboarding.welcomeSubtitle')}</p>
 
-        {/* Pet display */}
         <div className="relative inline-block mb-8">
           <div className="text-9xl animate-bounce">{speciesEmoji}</div>
           <div className="absolute -top-2 -left-2 bg-purple-600 text-xs font-bold px-2 py-1 rounded-full">
-            {rarityLabel}
+            {t(`pet.${animalDef.rarity}`)}
           </div>
         </div>
 
-        <p className="text-gray-300 mb-4">{t.onboarding.yourNewPet}</p>
-        <p className="text-gray-400 text-sm mb-6">
-          {t.pet[animalDef.species as keyof typeof t.pet]}
-        </p>
+        <p className="text-gray-300 mb-4">{t('onboarding.yourNewPet')}</p>
+        <p className="text-gray-400 text-sm mb-6">{t(`pet.${animalDef.species}`)}</p>
 
-        {/* Name input */}
         <div className="mb-6">
           <input
             type="text"
             value={name}
-            onChange={e => {
-              setName(e.target.value);
-              setNameError('');
-            }}
-            placeholder={t.onboarding.namePlaceholder}
+            onChange={e => { setName(e.target.value); setNameError(''); }}
+            placeholder={t('onboarding.namePlaceholder')}
             maxLength={20}
             className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg placeholder-gray-400 focus:outline-none focus:border-purple-500"
           />
-          {nameError && (
-            <p className="text-red-400 text-sm mt-2">{nameError}</p>
-          )}
+          {nameError && <p className="text-red-400 text-sm mt-2">{nameError}</p>}
         </div>
 
         <button
@@ -138,9 +127,9 @@ export function Onboarding() {
           {loading ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>{t.app.loading}</span>
+              <span>{t('app.loading')}</span>
             </div>
-          ) : t.onboarding.letsContinue + ' →'}
+          ) : `${t('onboarding.letsContinue')} →`}
         </button>
       </div>
     </div>

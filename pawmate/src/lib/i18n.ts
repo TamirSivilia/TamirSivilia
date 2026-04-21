@@ -1,174 +1,54 @@
-export const he = {
-  app: {
-    title: 'Pawmate',
-    tagline: 'חיית המחמד הווירטואלית שלך',
-    loading: 'טוען...',
-    error: 'שגיאה. אנא נסה שוב.',
-    save: 'שמור',
-    cancel: 'ביטול',
-    confirm: 'אישור',
-    close: 'סגור',
-    back: 'חזרה',
-  },
+import i18next from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import en from '@/locales/en.json';
+import he from '@/locales/he.json';
 
-  auth: {
-    guestPlay: 'שחק כאורח',
-    login: 'כניסה',
-    signup: 'הרשמה',
-    logout: 'התנתקות',
-    email: 'אימייל',
-    password: 'סיסמה',
-    displayName: 'שם תצוגה',
-    loginTitle: 'כניסה ל-Pawmate',
-    signupTitle: 'הצטרף ל-Pawmate',
-    orContinueWith: 'או המשך עם',
-    google: 'כניסה עם Google',
-    forgotPassword: 'שכחת סיסמה?',
-    noAccount: 'אין לך חשבון?',
-    hasAccount: 'כבר יש לך חשבון?',
-    guestNudge: 'שמור את ההתקדמות שלך!',
-    guestNudgeDesc: 'הצטרף בחינם כדי לא לאבד את חיית המחמד שלך',
-    upgradeAccount: 'שמור חשבון',
-    guestWarning: 'משחק כאורח — ההתקדמות לא שמורה',
-    authError: 'שגיאת התחברות. בדוק אימייל וסיסמה.',
-    signupSuccess: 'ברוך הבא! החשבון נוצר בהצלחה.',
-  },
+export const RTL_LANGUAGES = new Set(['he', 'ar', 'fa', 'ur']);
 
-  onboarding: {
-    welcomeTitle: 'ברוך הבא ל-Pawmate!',
-    welcomeSubtitle: 'חיית המחמד הווירטואלית שלך מחכה לך',
-    yourNewPet: 'הנה חיית המחמד החדשה שלך!',
-    namePlaceholder: 'שם חיית המחמד',
-    nameYourPet: 'תן שם לחיית המחמד',
-    letsContinue: 'בוא נמשיך',
-    nameRequired: 'חובה לתת שם',
-    nameTooShort: 'השם קצר מדי',
-    nameTooLong: 'השם ארוך מדי',
-  },
+const resources = {
+  en: { translation: en },
+  he: { translation: he },
+};
 
-  stats: {
-    hunger: 'רעב',
-    happiness: 'אושר',
-    energy: 'אנרגיה',
-    hygiene: 'היגיינה',
-    health: 'בריאות',
-    bond: 'קשר',
-    level: 'רמה',
-    xp: 'נסיון',
-  },
+i18next
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: 'en',
+    defaultNS: 'translation',
+    interpolation: {
+      escapeValue: false,
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'pawmate_lang',
+    },
+  });
 
-  actions: {
-    feed: 'האכלה',
-    play: 'משחק',
-    walk: 'טיול',
-    sleep: 'שינה',
-    feedDesc: 'האכל את חיית המחמד',
-    playDesc: 'שחק עם חיית המחמד',
-    walkDesc: 'צא לטיול',
-    sleepDesc: 'שלח לישון',
-    cooldown: 'נא להמתין',
-    cooldownMin: 'דקה',
-    cooldownSec: 'שניות',
-    noEnergy: 'אין מספיק אנרגיה',
-    noFood: 'אין אוכל במלאי',
-    sleeping: 'חיית המחמד ישנה...',
-    sleepEnd: 'ההשכמה בעוד',
-    feedSuccess: '+20 שביעות רעב',
-    playSuccess: '+15 אושר',
-    walkSuccess: 'טיול נהדר! +15 אושר',
-    sleepSuccess: 'שינה טובה! +40 אנרגיה',
-    xpGained: '+{xp} נסיון',
-    coinsGained: '+{coins} מטבעות',
-  },
+i18next.on('languageChanged', (lng) => {
+  const dir = RTL_LANGUAGES.has(lng) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dir;
+  document.documentElement.lang = lng;
+});
 
-  pet: {
-    dog: 'כלב',
-    cat: 'חתול',
-    rabbit: 'ארנב',
-    hamster: 'אוגר',
-    turtle: 'צב',
-    bird: 'ציפור',
-    fish: 'דג',
-    common: 'רגיל',
-    uncommon: 'יוצא דופן',
-    rare: 'נדיר',
-    legendary: 'אגדי',
-    speechHungry: 'אני רעב! 🍖',
-    speechBored: 'משעמם לי...',
-    speechLove: 'אוהב אותך! ❤️',
-    speechTired: 'אני עייף... 😴',
-    speechDirty: 'אני צריך אמבטיה 🛁',
-    speechSick: 'אני לא מרגיש טוב 😷',
-    speechHappy: 'כמה כיף! 🎉',
-    levelUp: 'עלית רמה! רמה {level}! 🎊',
-  },
+// Apply direction on initial load
+const initialLang = i18next.language?.split('-')[0] ?? 'en';
+document.documentElement.dir = RTL_LANGUAGES.has(initialLang) ? 'rtl' : 'ltr';
+document.documentElement.lang = initialLang;
 
-  economy: {
-    coins: 'מטבעות',
-    gems: 'יהלומים',
-    shop: 'חנות',
-    shopTitle: 'חנות',
-    buyWith: 'קנה ב-',
-    notEnoughCoins: 'אין מספיק מטבעות',
-    notEnoughGems: 'אין מספיק יהלומים',
-    purchased: 'נרכש בהצלחה!',
-    inventory: 'מלאי',
-    emptyInventory: 'המלאי ריק',
-    watchAd: 'צפה בפרסומת = קבל 50 מטבעות',
-    adLoading: 'הפרסומת נטענת...',
-    adReward: '+50 מטבעות!',
-    premium: 'פרמיום',
-    premiumBadge: '★ פרמיום',
-  },
+export default i18next;
 
-  shop: {
-    food: 'אוכל',
-    toys: 'צעצועים',
-    basic_food: 'אוכל בסיסי',
-    premium_food: 'אוכל מזין',
-    deluxe_food: 'אוכל יוקרתי',
-    ball: 'כדור',
-    feather: 'נוצה',
-    basic_food_desc: 'ארוחה פשוטה ומזינה',
-    premium_food_desc: 'ארוחה מיוחדת ומשביעה',
-    deluxe_food_desc: 'ארוחת גורמה יוקרתית',
-    ball_desc: 'כדור כיפי למשחק',
-    feather_desc: 'נוצה מושכת לחתולים',
-  },
+/** Formats a number using the active locale */
+export function formatNumber(n: number): string {
+  return new Intl.NumberFormat(i18next.language).format(n);
+}
 
-  settings: {
-    title: 'הגדרות',
-    sound: 'צלילים',
-    music: 'מוזיקה',
-    notifications: 'התראות',
-    language: 'שפה',
-    account: 'חשבון',
-    version: 'גרסה',
-    logoutConfirm: 'האם להתנתק?',
-  },
-
-  walk: {
-    title: 'טיול',
-    start: 'התחל טיול',
-    ready: 'מוכן?',
-    go: 'יאללה!',
-    timeLeft: 'זמן נשאר',
-    dragPet: 'גרור את חיית המחמד לסוף הנתיב',
-    avoidObstacles: 'הימנע ממכשולים!',
-    success: 'כל הכבוד! 🎉',
-    fail: 'נסה שוב!',
-    distance: 'מרחק',
-    meters: 'מטר',
-  },
-
-  misc: {
-    comeBack: 'חיית המחמד שלך מחכה לך!',
-    statsDecayed: 'הערכים ירדו בזמן שהיית משוחרר',
-    gameOver: 'חיית המחמד שלך צריכה עזרה דחופה!',
-    tapForLove: 'לחץ על חיית המחמד להפגין אהבה',
-    rateLimited: 'עוד מעט אפשר לגעת שוב',
-  },
-} as const;
-
-export type I18nKey = keyof typeof he;
-export const t = he;
+/** Formats a date using the active locale */
+export function formatDate(date: Date | string): string {
+  return new Intl.DateTimeFormat(i18next.language, {
+    year: 'numeric', month: 'short', day: 'numeric',
+  }).format(new Date(date));
+}
