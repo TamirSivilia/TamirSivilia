@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Assistant:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    direction: rtl;
+    font-family: 'Rubik', 'Assistant', sans-serif;
+  }
+
+  body {
+    @apply bg-gray-900 text-white;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  #root {
+    @apply w-full flex flex-col;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .stat-bar {
+    @apply w-full h-3 bg-gray-700 rounded-full overflow-hidden;
+  }
+
+  .stat-bar-fill {
+    @apply h-full rounded-full transition-all duration-500;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-red-500 text-white font-bold rounded-2xl
+           active:scale-95 transition-transform duration-100 shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gray-700 text-white font-semibold rounded-2xl
+           active:scale-95 transition-transform duration-100;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/70 flex items-end justify-center z-50;
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .modal-sheet {
+    @apply bg-gray-800 rounded-t-3xl w-full p-6 pb-8;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}
+
+/* Phaser canvas */
+#game-canvas canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Numbers always LTR in RTL context */
+.ltr-num {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
