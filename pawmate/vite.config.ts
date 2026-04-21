@@ -9,15 +9,15 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Pawmate - חיית מחמד וירטואלית',
+        name: 'Pawmate — Virtual Pet',
         short_name: 'Pawmate',
-        description: 'גדל חיית מחמד וירטואלית',
+        description: 'Your virtual pet companion',
         theme_color: '#FF6B6B',
         background_color: '#1a1a2e',
         display: 'standalone',
         orientation: 'portrait',
-        lang: 'he',
-        dir: 'rtl',
+        lang: 'en',
+        dir: 'ltr',
         icons: [
           { src: '/assets/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/assets/icon-512.png', sizes: '512x512', type: 'image/png' },
