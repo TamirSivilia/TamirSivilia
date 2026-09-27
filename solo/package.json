@@ -1,0 +1,16 @@
+{
+  "name": "solo-rotem-cohanim",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SOLO — Rotem Cohanim: fitness brand site, digital course, and trainee portal",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "DEV_PREVIEW=true node server.mjs",
+    "configure-admin": "node configure-admin.mjs",
+    "test": "node --test tests.mjs"
+  }
+}

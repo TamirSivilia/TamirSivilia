@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ניהול — SOLO</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/app-shared.css" />
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap site-header__row">
+      <a href="/" class="wordmark">SOLO</a>
+      <span class="app-title">ניהול</span>
+      <button class="btn btn--ghost app-header-btn" id="logout-btn" hidden>יציאה</button>
+    </div>
+  </header>
+
+  <main class="wrap app-shell">
+    <!-- LOGIN -->
+    <section id="login-view" class="auth-card">
+      <p class="eyebrow">כניסת מנהלת</p>
+      <h1 class="section-title">כניסה למערכת הניהול</h1>
+
+      <form id="login-form" class="auth-form">
+        <label for="username-input">שם משתמש</label>
+        <input id="username-input" type="text" required autocomplete="username" />
+        <label for="password-input">סיסמה</label>
+        <input id="password-input" type="password" required autocomplete="current-password" />
+        <button class="btn btn--primary" type="submit">כניסה</button>
+        <p class="form-note" id="login-note"></p>
+      </form>
+
+      <form id="twofa-form" class="auth-form" hidden>
+        <label for="twofa-input">קוד אימות</label>
+        <input id="twofa-input" type="text" inputmode="numeric" maxlength="6" required autocomplete="one-time-code" />
+        <button class="btn btn--primary" type="submit">אישור</button>
+        <p class="form-note" id="twofa-note"></p>
+      </form>
+    </section>
+
+    <!-- APP -->
+    <section id="app-view" hidden>
+      <div class="app-tabs">
+        <button class="app-tab is-active" data-tab="trainees">מתאמנות</button>
+        <button class="app-tab" data-tab="lessons">שיעורים</button>
+        <button class="app-tab" data-tab="landing">תוכן האתר</button>
+      </div>
+
+      <!-- TRAINEES -->
+      <div class="app-panel is-active" id="panel-trainees">
+        <form id="trainee-form" class="inline-form">
+          <input type="text" id="tf-name" placeholder="שם מלא" required />
+          <input type="tel" id="tf-phone" placeholder="050-1234567" required />
+          <button class="btn btn--primary" type="submit">הוספת מתאמנת</button>
+        </form>
+        <p class="form-note" id="trainee-note"></p>
+        <div id="trainees-list" class="admin-table-wrap"></div>
+      </div>
+
+      <!-- LESSONS -->
+      <div class="app-panel" id="panel-lessons">
+        <form id="lesson-form" class="lesson-form">
+          <input type="hidden" id="lf-id" />
+          <div class="progress-form__row">
+            <label>כותרת<input type="text" id="lf-title" required /></label>
+            <label>קבוצת שריר<input type="text" id="lf-muscle" /></label>
+          </div>
+          <label>תיאור<input type="text" id="lf-desc" /></label>
+          <label>קישור YouTube<input type="url" id="lf-url" placeholder="https://youtu.be/…" /></label>
+          <div class="progress-form__row">
+            <label>סדר תצוגה<input type="number" id="lf-order" value="0" /></label>
+            <label>סטטוס
+              <select id="lf-status">
+                <option value="draft">טיוטה</option>
+                <option value="published">מפורסם</option>
+              </select>
+            </label>
+          </div>
+          <div class="lesson-form__actions">
+            <button class="btn btn--primary" type="submit" id="lf-submit">הוספת שיעור</button>
+            <button class="btn btn--ghost" type="button" id="lf-cancel" hidden>ביטול עריכה</button>
+          </div>
+          <p class="form-note" id="lesson-note"></p>
+        </form>
+        <div id="lessons-admin-list" class="stack"></div>
+      </div>
+
+      <!-- LANDING CONTENT -->
+      <div class="app-panel" id="panel-landing">
+        <form id="landing-form" class="landing-form"></form>
+        <button class="btn btn--primary" id="landing-save">שמירת שינויים</button>
+        <p class="form-note" id="landing-note"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>

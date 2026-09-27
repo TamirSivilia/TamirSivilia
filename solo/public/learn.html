@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>אזור מתאמנות — SOLO</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/app-shared.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap site-header__row">
+      <a href="/" class="wordmark">SOLO</a>
+      <span class="app-title">אזור מתאמנות</span>
+      <button class="btn btn--ghost app-header-btn" id="logout-btn" hidden>יציאה</button>
+    </div>
+  </header>
+
+  <main class="wrap app-shell">
+    <!-- LOGIN -->
+    <section id="login-view" class="auth-card">
+      <p class="eyebrow">כניסת מתאמנות</p>
+      <h1 class="section-title">כניסה עם מספר טלפון</h1>
+      <p class="body-lg">מזינות את המספר שנרשם אצל רותם, ומקבלות קוד חד־פעמי לאישור.</p>
+
+      <form id="phone-form" class="auth-form">
+        <label for="phone-input">מספר טלפון</label>
+        <input id="phone-input" type="tel" inputmode="tel" placeholder="050-1234567" required autocomplete="tel" />
+        <button class="btn btn--primary" type="submit">שליחת קוד</button>
+        <p class="form-note" id="phone-note"></p>
+      </form>
+
+      <form id="code-form" class="auth-form" hidden>
+        <label for="code-input">קוד אימות</label>
+        <input id="code-input" type="text" inputmode="numeric" maxlength="6" placeholder="123456" required autocomplete="one-time-code" />
+        <button class="btn btn--primary" type="submit">כניסה</button>
+        <p class="form-note" id="code-note"></p>
+      </form>
+    </section>
+
+    <!-- APP -->
+    <section id="app-view" hidden>
+      <div class="app-tabs">
+        <button class="app-tab is-active" data-tab="lessons">שיעורים</button>
+        <button class="app-tab" data-tab="exercises">מאגר תרגילים</button>
+        <button class="app-tab" data-tab="progress">טבלת מעקב</button>
+      </div>
+
+      <div class="app-panel is-active" id="panel-lessons">
+        <div id="lessons-list" class="stack"></div>
+        <p class="empty-note" id="lessons-empty" hidden>עדיין אין שיעורים זמינים — בקרוב.</p>
+      </div>
+
+      <div class="app-panel" id="panel-exercises">
+        <div id="exercises-list" class="stack"></div>
+      </div>
+
+      <div class="app-panel" id="panel-progress">
+        <form id="progress-form" class="progress-form">
+          <div class="progress-form__row">
+            <label>תאריך<input type="date" id="pf-date" required /></label>
+            <label>תרגיל<input type="text" id="pf-exercise" required placeholder="לדוגמה: סקוואט גובלט" /></label>
+          </div>
+          <div class="progress-form__row">
+            <label>סטים<input type="number" id="pf-sets" min="0" /></label>
+            <label>חזרות<input type="number" id="pf-reps" min="0" /></label>
+            <label>משקל (ק"ג)<input type="number" id="pf-weight" min="0" step="0.5" /></label>
+          </div>
+          <label>הערות<input type="text" id="pf-notes" /></label>
+          <button class="btn btn--primary" type="submit">הוספת רשומה</button>
+        </form>
+
+        <div class="progress-table-wrap">
+          <div class="progress-table-header">
+            <h2>ההיסטוריה שלי</h2>
+            <a class="btn btn--ghost" id="export-csv" href="/api/trainee/progress/export.csv">הורדת CSV</a>
+          </div>
+          <table class="progress-table" id="progress-table">
+            <thead>
+              <tr><th>תאריך</th><th>תרגיל</th><th>סטים</th><th>חזרות</th><th>משקל</th><th>הערות</th><th></th></tr>
+            </thead>
+            <tbody id="progress-tbody"></tbody>
+          </table>
+          <p class="empty-note" id="progress-empty" hidden>עדיין אין רשומות.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/learn.js"></script>
+</body>
+</html>

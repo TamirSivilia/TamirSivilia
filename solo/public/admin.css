@@ -1,0 +1,111 @@
+.inline-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.inline-form input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  font-family: var(--font-body);
+  flex: 1;
+  min-width: 160px;
+}
+
+.admin-table-wrap { overflow-x: auto; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.admin-table th, .admin-table td {
+  text-align: start;
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+
+.admin-table th { color: var(--color-ink-soft); font-size: 0.8rem; }
+
+.status-pill {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.status-pill--active { background: #eef7ee; color: #3c8452; }
+.status-pill--paused { background: #f7eeee; color: #a5455a; }
+.status-pill--draft { background: var(--color-bg-tint); color: var(--color-ink-soft); }
+.status-pill--published { background: #eef1f8; color: var(--color-purple-deep); }
+
+.row-btn {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin-inline-end: 0.3rem;
+}
+
+.row-btn:hover { border-color: var(--color-purple); }
+.row-btn--danger { color: #b23a5c; }
+
+.lesson-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: var(--color-bg-tint);
+  padding: var(--space-3);
+  border-radius: 1rem;
+  margin-bottom: var(--space-4);
+}
+
+.lesson-form input, .lesson-form select {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  font-family: var(--font-body);
+}
+
+.lesson-form label { font-size: 0.85rem; color: var(--color-ink-soft); font-weight: 500; }
+.lesson-form__actions { display: flex; gap: 0.6rem; align-items: center; }
+
+.admin-lesson-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.landing-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.landing-form label { font-size: 0.85rem; color: var(--color-ink-soft); font-weight: 600; }
+
+.landing-form input, .landing-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.landing-form textarea { min-height: 5rem; resize: vertical; }
