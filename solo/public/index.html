@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOLO — רותם כהנים</title>
+<meta name="description" content="SOLO: קורס אימונים דיגיטלי של רותם כהנים. להבין מה את עושה, לא רק לסמן וי.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Rubik:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="wordmark" href="#top">SOLO<span>.</span></a>
+    <nav class="site-nav" aria-label="ניווט ראשי">
+      <a href="#course">הקורס</a>
+      <a href="#how">איך זה עובד</a>
+      <a href="#faq" id="nav-faq" hidden>שאלות נפוצות</a>
+    </nav>
+    <a class="btn btn-primary header-cta" data-whatsapp="course" href="#" target="_blank" rel="noopener">
+      דברו איתי בוואטסאפ
+    </a>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-copy reveal">
+        <p class="hero-eyebrow">SOLO — קורס אימונים דיגיטלי</p>
+        <h1 class="hero-headline" data-bind="hero_headline"></h1>
+        <p class="hero-sub" data-bind="hero_sub"></p>
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" data-whatsapp="course" href="#" target="_blank" rel="noopener">דברו איתי בוואטסאפ</a>
+          <a class="btn btn-ghost" href="#fit">למי זה מתאים?</a>
+        </div>
+      </div>
+      <div class="hero-media reveal">
+        <div class="hero-media-frame">
+          <img src="/assets/rotem-hero.jpg" alt="רותם כהנים, מאמנת אישית">
+        </div>
+        <div class="hero-media-mark" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="problem-heading">
+    <div class="container reveal">
+      <p class="section-kicker">בגובה העיניים</p>
+      <h2 id="problem-heading" class="section-heading">מוכר לך?</h2>
+      <ul class="problem-lines" data-bind-list="problem_lines"></ul>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="fit" aria-labelledby="fit-heading">
+    <div class="container reveal">
+      <p class="section-kicker">בואי נהיה כנות</p>
+      <h2 id="fit-heading" class="section-heading">למי זה מתאים — ולמי פחות</h2>
+      <div class="fit-grid">
+        <div class="fit-card is-for">
+          <h3>זה בשבילך אם —</h3>
+          <ul data-bind-list="for_list"></ul>
+        </div>
+        <div class="fit-card is-not-for">
+          <h3>כנראה שפחות, אם —</h3>
+          <ul data-bind-list="not_for_list"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="course" aria-labelledby="course-heading">
+    <div class="container reveal">
+      <p class="section-kicker">מה מקבלים</p>
+      <h2 id="course-heading" class="section-heading">בתוך הקורס</h2>
+      <div class="includes-layout">
+        <ul class="includes-list" data-bind-list="course_includes"></ul>
+        <div>
+          <div class="gift-mock">
+            <h4>במתנה — טבלת מעקב התקדמות</h4>
+            <table class="gift-table">
+              <thead>
+                <tr><th>תאריך</th><th>אימון</th><th>הערות</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>לדוגמה</td><td>פלג גוף תחתון</td><td>העליתי משקל בסקוואט</td></tr>
+                <tr><td>לדוגמה</td><td>פלג גוף עליון</td><td>הרגשתי שליטה טובה יותר</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="gift-mock">
+            <h4>במתנה — מאגר תרגילים לפי קבוצת שריר</h4>
+            <div class="gift-chips">
+              <span class="gift-chip">רגליים</span>
+              <span class="gift-chip">גב</span>
+              <span class="gift-chip">חזה</span>
+              <span class="gift-chip">כתפיים</span>
+              <span class="gift-chip">core</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="how" aria-labelledby="how-heading">
+    <div class="container reveal">
+      <p class="section-kicker">התהליך</p>
+      <h2 id="how-heading" class="section-heading">איך זה עובד</h2>
+      <ol class="steps" data-bind-steps="how_it_works"></ol>
+    </div>
+  </section>
+
+  <section class="section" id="about" aria-labelledby="about-heading" hidden>
+    <div class="container reveal">
+      <p class="section-kicker">מי מלמדת</p>
+      <h2 id="about-heading" class="section-heading">רותם כהנים</h2>
+      <div class="about-layout">
+        <div class="about-photo">
+          <img src="/assets/rotem-hero.jpg" alt="רותם כהנים">
+        </div>
+        <p data-bind="about_text"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="coaching" aria-labelledby="coaching-heading" hidden>
+    <div class="container reveal">
+      <p class="section-kicker">שירות נפרד</p>
+      <h2 id="coaching-heading" class="section-heading">ליווי אישי</h2>
+      <p data-bind="coaching_intro"></p>
+      <a class="btn btn-primary" data-whatsapp="coaching" href="#" target="_blank" rel="noopener">לשמוע פרטים על הליווי</a>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-heading" hidden>
+    <div class="container reveal">
+      <p class="section-kicker">שאלות</p>
+      <h2 id="faq-heading" class="section-heading">שאלות נפוצות</h2>
+      <div class="faq-list" data-bind-faq="faq_items"></div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container reveal">
+      <h2>מוכנה להבין מה את עושה?</h2>
+      <a class="btn btn-primary" data-whatsapp="course" href="#" target="_blank" rel="noopener">דברו איתי בוואטסאפ</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <span>SOLO — רותם כהנים</span>
+    <ul class="footer-links">
+      <li><a id="footer-instagram" href="#" target="_blank" rel="noopener" hidden>אינסטגרם</a></li>
+      <li><a href="/accessibility.html">הצהרת נגישות</a></li>
+      <li><a href="/privacy.html">פרטיות</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
