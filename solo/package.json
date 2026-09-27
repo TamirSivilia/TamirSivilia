@@ -1,0 +1,15 @@
+{
+  "name": "solo-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SOLO — Rotem Cohanim's coaching site (landing, admin, learner area)",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "NODE_ENV=development node server.mjs",
+    "test": "NODE_ENV=development node --test tests.mjs"
+  }
+}
