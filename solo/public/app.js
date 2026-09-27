@@ -14,6 +14,11 @@
       el.innerHTML = content[key].replace(/\n/g, '<br />');
     });
 
+    document.querySelectorAll('[data-img-key]').forEach((el) => {
+      const key = el.getAttribute('data-img-key');
+      if (content[key]) el.src = content[key];
+    });
+
     const phone = content.whatsapp_number || '972526052935';
     const message = 'היי רותם, אני רוצה לשמוע פרטים על הקורס של SOLO';
     document.querySelectorAll('#header-whatsapp, #hero-whatsapp, #join-whatsapp, #footer-whatsapp').forEach((el) => {

@@ -22,8 +22,8 @@ const DEFAULT_LANDING_CONTENT = {
   about_text:
     'רותם כהנים היא מאמנת כושר אישית שעובדת עם נשים באימונים אישיים וזוגיים. הקורס הזה נולד מהשאלה שהיא שומעת הכי הרבה: "אני מתאמנת, אז למה אני לא רואה תוצאה?" — התשובה כמעט תמיד נמצאת לא בכמות האימונים, אלא בהבנה של מה עושים בהם.',
   whatsapp_number: '972526052935',
-  hero_image_url: '',
-  personal_image_url: '',
+  hero_image_url: '/assets/rotem.jpg',
+  personal_image_url: '/assets/rotem.jpg',
   tagline: 'להבין מה את עושה. ולא רק לסמן וי.',
   instagram_url: 'https://www.instagram.com/rotem_cohanim/',
 };
