@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>הנחש המתוק 🐍</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 10px; padding: 10px;
+    background: linear-gradient(160deg, #a8edea, #fed6e3);
+    font-family: "Segoe UI", Arial, sans-serif; color: #3b2f63; user-select: none; touch-action: manipulation;
+  }
+  h1 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.4rem); }
+  .bar { display: flex; gap: 12px; font-size: 1.3rem; font-weight: 700; }
+  .bar span { background: #fff; padding: 4px 14px; border-radius: 20px; box-shadow: 0 3px 0 #0002; }
+  #wrap { position: relative; }
+  canvas {
+    width: min(92vw, 60vh, 480px); height: min(92vw, 60vh, 480px);
+    border-radius: 20px; border: 6px solid #fff; box-shadow: 0 8px 20px #0003; background: #c8f7c5;
+  }
+  #overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; background: #ffffffd9; border-radius: 20px; text-align: center; padding: 16px;
+  }
+  #overlay.hide { display: none; }
+  #overlay h2 { margin: 0; font-size: 2rem; }
+  #overlay p { margin: 0; font-size: 1.1rem; }
+  button {
+    font: inherit; font-size: 1.4rem; font-weight: 700; border: 0; border-radius: 40px; cursor: pointer;
+    padding: 10px 28px; background: #ff7eb3; color: #fff; box-shadow: 0 5px 0 #c9507f;
+  }
+  button:active { transform: translateY(3px); box-shadow: 0 2px 0 #c9507f; }
+  .speeds { display: flex; gap: 8px; }
+  .speeds button { font-size: 1.1rem; padding: 6px 16px; background: #9d8cff; box-shadow: 0 4px 0 #6e5fd0; }
+  .speeds button.on { background: #4cd18a; box-shadow: 0 4px 0 #2c9e63; }
+  .pad { display: grid; grid-template-columns: repeat(3, 70px); grid-template-rows: repeat(2, 70px); gap: 6px; direction: ltr; }
+  .pad button { padding: 0; font-size: 2rem; background: #ffb347; box-shadow: 0 4px 0 #c98022; }
+  .pad .up { grid-column: 2; grid-row: 1; }
+  .pad .left { grid-column: 1; grid-row: 2; }
+  .pad .down { grid-column: 2; grid-row: 2; }
+  .pad .right { grid-column: 3; grid-row: 2; }
+  @media (hover: hover) and (pointer: fine) { .pad { display: none; } }
+</style>
+</head>
+<body>
+  <h1>🐍 הנחש המתוק</h1>
+  <div class="bar"><span>⭐ <b id="score">0</b></span><span>🏆 <b id="best">0</b></span></div>
+
+  <div id="wrap">
+    <canvas id="c" width="480" height="480"></canvas>
+    <div id="overlay">
+      <h2 id="title">מוכנים לשחק?</h2>
+      <p id="msg">אספו פירות כדי שהנחש יגדל!<br>אפשר לעבור דרך הקירות 🌈<br>החצים במקלדת או הכפתורים</p>
+      <div class="speeds" id="speeds">
+        <button data-s="260">🐢 איטי</button>
+        <button data-s="190" class="on">🐰 רגיל</button>
+        <button data-s="130">🚀 מהיר</button>
+      </div>
+      <button id="go">▶ שחקו!</button>
+    </div>
+  </div>
+
+  <div class="pad">
+    <button class="up" data-d="up">⬆️</button>
+    <button class="left" data-d="left">⬅️</button>
+    <button class="down" data-d="down">⬇️</button>
+    <button class="right" data-d="right">➡️</button>
+  </div>
+
+<script>
+const N = 16, S = 480 / N;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const $ = id => document.getElementById(id);
+const FRUITS = ['🍎', '🍓', '🍌', '🍇', '🍊', '🍉', '🍒', '🍍'];
+const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+let snake, dir, queue, fruit, fruitEmoji, score, speed = 190, timer, running = false, sparkles = [];
+let best = 0;
+try { best = +localStorage.getItem('snakeBest') || 0; } catch (e) {}
+$('best').textContent = best;
+
+// Simple happy sounds (WebAudio, no files needed)
+let ac;
+function beep(freq, dur = 0.12, type = 'sine') {
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = 0.12;
+    o.connect(g); g.connect(ac.destination); o.start();
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + dur); o.stop(ac.currentTime + dur);
+  } catch (e) {}
+}
+
+function placeFruit() {
+  do { fruit = [Math.floor(Math.random() * N), Math.floor(Math.random() * N)]; }
+  while (snake.some(p => p[0] === fruit[0] && p[1] === fruit[1]));
+  fruitEmoji = FRUITS[Math.floor(Math.random() * FRUITS.length)];
+}
+
+function start() {
+  snake = [[8, 8], [7, 8], [6, 8]];
+  dir = 'right'; queue = []; score = 0; sparkles = [];
+  $('score').textContent = 0;
+  placeFruit();
+  $('overlay').classList.add('hide');
+  running = true;
+  clearInterval(timer); timer = setInterval(step, speed);
+  draw();
+}
+
+function turn(d) {
+  const last = queue.length ? queue[queue.length - 1] : dir;
+  const [ax, ay] = DIRS[d], [bx, by] = DIRS[last];
+  if (ax + bx === 0 && ay + by === 0) return; // no U-turn
+  if (queue.length < 2) queue.push(d);
+}
+
+function step() {
+  if (queue.length) dir = queue.shift();
+  const [dx, dy] = DIRS[dir];
+  // walls are friendly: wrap around to the other side
+  const head = [(snake[0][0] + dx + N) % N, (snake[0][1] + dy + N) % N];
+  const ate = head[0] === fruit[0] && head[1] === fruit[1];
+  const body = ate ? snake : snake.slice(0, -1);
+  if (body.some(p => p[0] === head[0] && p[1] === head[1])) return end();
+  snake.unshift(head);
+  if (ate) {
+    score++; $('score').textContent = score;
+    for (let i = 0; i < 12; i++) sparkles.push({ x: (head[0] + .5) * S, y: (head[1] + .5) * S, vx: (Math.random() - .5) * 8, vy: (Math.random() - .5) * 8, life: 1 });
+    beep(520); setTimeout(() => beep(780), 80);
+    placeFruit();
+  } else snake.pop();
+  draw();
+}
+
+function end() {
+  running = false; clearInterval(timer);
+  beep(300, .3, 'triangle');
+  if (score > best) {
+    best = score; $('best').textContent = best;
+    try { localStorage.setItem('snakeBest', best); } catch (e) {}
+  }
+  $('title').textContent = score >= 10 ? '🎉 וואו, אלופים!' : 'אופס! הנחש נתקל בעצמו 🙈';
+  $('msg').innerHTML = `אספתם <b>${score}</b> פירות!<br>רוצים לנסות שוב?`;
+  $('go').textContent = '🔄 שוב!';
+  $('overlay').classList.remove('hide');
+}
+
+function draw() {
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    ctx.fillStyle = (x + y) % 2 ? '#c8f7c5' : '#b5eeb1';
+    ctx.fillRect(x * S, y * S, S, S);
+  }
+  ctx.font = `${S * .85}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(fruitEmoji, (fruit[0] + .5) * S, (fruit[1] + .55) * S);
+
+  snake.forEach((p, i) => {
+    const hue = (i * 18) % 360;
+    ctx.fillStyle = i === 0 ? '#ff6b9d' : `hsl(${hue}, 80%, 60%)`;
+    ctx.beginPath(); ctx.roundRect(p[0] * S + 2, p[1] * S + 2, S - 4, S - 4, 10); ctx.fill();
+  });
+  // face
+  const h = snake[0], [dx, dy] = DIRS[dir], cx = (h[0] + .5) * S, cy = (h[1] + .5) * S;
+  const px = -dy, py = dx; // perpendicular
+  for (const side of [-1, 1]) {
+    const ex = cx + dx * 5 + px * side * 7, ey = cy + dy * 5 + py * side * 7;
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex, ey, 5, 0, 7); ctx.fill();
+    ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(ex + dx * 1.5, ey + dy * 1.5, 2.5, 0, 7); ctx.fill();
+  }
+  ctx.strokeStyle = '#a3254f'; ctx.lineWidth = 2; ctx.beginPath();
+  ctx.arc(cx + dx * 8, cy + dy * 8, 4, 0, Math.PI); ctx.stroke();
+  drawSparkles();
+}
+
+function drawSparkles() {
+  sparkles = sparkles.filter(s => s.life > 0);
+  sparkles.forEach(s => {
+    s.x += s.vx; s.y += s.vy; s.life -= 0.08;
+    ctx.globalAlpha = Math.max(s.life, 0); ctx.font = '16px serif'; ctx.fillText('✨', s.x, s.y);
+  });
+  ctx.globalAlpha = 1;
+}
+setInterval(() => { if (running && sparkles.length) draw(); }, 40);
+
+// Controls
+const KEYS = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right' };
+addEventListener('keydown', e => {
+  if (KEYS[e.key]) { e.preventDefault(); turn(KEYS[e.key]); }
+  else if ((e.key === ' ' || e.key === 'Enter') && !running) start();
+});
+document.querySelectorAll('.pad button').forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); turn(b.dataset.d); }));
+let t0;
+cv.addEventListener('touchstart', e => { t0 = e.touches[0]; }, { passive: true });
+cv.addEventListener('touchend', e => {
+  if (!t0) return;
+  const t = e.changedTouches[0], dx = t.clientX - t0.clientX, dy = t.clientY - t0.clientY;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) > 20) turn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+});
+$('go').onclick = start;
+document.querySelectorAll('#speeds button').forEach(b => b.onclick = () => {
+  speed = +b.dataset.s;
+  document.querySelectorAll('#speeds button').forEach(x => x.classList.toggle('on', x === b));
+});
+
+// Initial preview
+snake = [[8, 8], [7, 8], [6, 8]]; dir = 'right'; placeFruit(); draw();
+</script>
+</body>
+</html>
