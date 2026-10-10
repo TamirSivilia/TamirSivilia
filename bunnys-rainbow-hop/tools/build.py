@@ -6,7 +6,9 @@ Outputs: build/captions.ass, build/final.mp4  (1080x1920, 30fps, <=60s)
 Usage  : python3 tools/build.py [--no-audio] [--clips DIR] [--out PATH]
 Clips longer than their slot are trimmed. Shorter clips are slowed down evenly to fill the slot when
 the gap is within --max-stretch (default 1.25x, e.g. 5s -> 6s = 1.2x); beyond that, the last frame is held.
-No default one-second freeze: use --max-stretch 1.0 to force hold-only.
+Frozen-frame holds are treated as a problem: a WARNING block is printed at the end and the exit code is 3
+(final.mp4 is still written) unless --allow-hold is passed after the hold has been reviewed.
+Stretching is also listed in the summary: confirm sync against the song before accepting it.
 """
 import argparse, json, subprocess, sys
 from pathlib import Path
@@ -51,6 +53,7 @@ def main():
     ap.add_argument("--clips", default=str(ROOT/"assets/clips"))
     ap.add_argument("--audio", default=None)
     ap.add_argument("--max-stretch", type=float, default=1.25)
+    ap.add_argument("--allow-hold", action="store_true", help="accept reviewed freeze-frame holds (exit 0)")
     ap.add_argument("--no-audio", action="store_true")
     ap.add_argument("--out", default=str(ROOT/"build/final.mp4"))
     a = ap.parse_args()
@@ -59,7 +62,7 @@ def main():
     (ROOT/"build").mkdir(exist_ok=True)
     ass = ROOT/"build/captions.ass"; make_ass(cfg, ass)
 
-    inputs, chains = [], []
+    inputs, chains, holds, stretches = [], [], [], []
     for i, s in enumerate(cfg["scenes"]):
         clip = Path(a.clips) / f"scene_{s['id']:02d}.mp4"
         if not clip.exists(): sys.exit(f"missing clip: {clip}")
@@ -67,8 +70,8 @@ def main():
         inputs += ["-i", str(clip)]
         src = probe(clip); ratio = dur / src
         stretch = f"setpts={ratio:.5f}*PTS," if 1.0 < ratio <= a.max_stretch else ""
-        if stretch: print(f"scene {s['id']}: {src:.2f}s -> {dur:.2f}s (slow {ratio:.2f}x)")
-        elif ratio > 1.0: print(f"scene {s['id']}: {src:.2f}s < {dur:.2f}s slot, holding last frame {dur-src:.2f}s")
+        if stretch: stretches.append(f"scene {s['id']}: {src:.2f}s -> {dur:.2f}s (slowed {ratio:.2f}x)")
+        elif ratio > 1.0: holds.append(f"scene {s['id']}: {src:.2f}s clip in {dur:.2f}s slot, last frame frozen for {dur-src:.2f}s")
         chains.append(f"[{i}:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},{stretch}fps={fps},"
                       f"tpad=stop_mode=clone:stop_duration={dur},trim=duration={dur},setpts=PTS-STARTPTS,setsar=1[v{i}]")
     n = len(cfg["scenes"])
@@ -81,6 +84,11 @@ def main():
     if audio: cmd += ["-map", f"{n}:a", "-af", "loudnorm=I=-16:TP=-1.5", "-c:a", "aac", "-b:a", "192k"]
     cmd += ["-t", str(cfg["scenes"][-1]["end"]), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-movflags", "+faststart", a.out]
     print(" ".join(cmd[:3]), "...", a.out); subprocess.run(cmd, check=True)
+    if stretches:
+        print("\nNOTE slowed clips (verify motion/beat sync against the song):"); [print("  " + x) for x in stretches]
+    if holds:
+        print("\n!!! WARNING: FROZEN-FRAME HOLDS - review before delivery !!!"); [print("  " + x) for x in holds]
+        if not a.allow_hold: sys.exit(3)
 
 if __name__ == "__main__":
     main()

@@ -30,3 +30,6 @@ Pipeline was tested end-to-end with synthetic clips (1080×1920, 60.0s, AAC).
 ## Update: v1 references received
 `assets/refs/bunny-frog-reference-v1.webp` and `docs/character-spec-v1.md` (palette: fur #FFF9F0, overalls #368BDD, ears #F5B7C7, buttons #F7C948, frog #70BE69, belly #D8EFA9, dark #263047; Frog ≈ 1/3 Bunny height).
 Short clips (e.g. 5s) are now slowed evenly to fill a 6s slot (up to 1.25x, `--max-stretch`), not padded with a frozen second. Still awaiting: song file, vocal timings, motion-test clip.
+
+## Policy (Codex)
+Aim for clips covering the full 6s. Slowing is a spot fix after sync check against the song; `build.py` lists slowed clips as NOTE and treats freeze-frame holds as a WARNING with exit code 3 until `--allow-hold` is passed. Next: song analysis (line + beat times) when the file arrives.
