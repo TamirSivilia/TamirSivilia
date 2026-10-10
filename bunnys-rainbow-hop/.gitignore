@@ -1,0 +1,4 @@
+build/
+assets/clips/*.mp4
+assets/audio/*
+!assets/**/.gitkeep
