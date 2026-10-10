@@ -4,7 +4,9 @@
 Inputs : timing.json, assets/clips/scene_01.mp4 .. scene_10.mp4 (any length/size), assets/audio/song.wav|mp3
 Outputs: build/captions.ass, build/final.mp4  (1080x1920, 30fps, <=60s)
 Usage  : python3 tools/build.py [--no-audio] [--clips DIR] [--out PATH]
-Clips longer than their slot are trimmed; shorter ones freeze the last frame.
+Clips longer than their slot are trimmed. Shorter clips are slowed down evenly to fill the slot when
+the gap is within --max-stretch (default 1.25x, e.g. 5s -> 6s = 1.2x); beyond that, the last frame is held.
+No default one-second freeze: use --max-stretch 1.0 to force hold-only.
 """
 import argparse, json, subprocess, sys
 from pathlib import Path
@@ -39,10 +41,16 @@ def make_ass(cfg, path):
             out.append(f"Dialogue: 1,{ts(n['at'])},{ts(n['at']+0.9)},Num,,0,0,0,,{{\\fad(60,150)\\fscx60\\fscy60\\t(0,200,\\fscx100\\fscy100)}}{n['n']}")
     Path(path).write_text("\n".join(out) + "\n", encoding="utf-8")
 
+def probe(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
+                       capture_output=True, text=True, check=True)
+    return float(r.stdout.strip())
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--clips", default=str(ROOT/"assets/clips"))
     ap.add_argument("--audio", default=None)
+    ap.add_argument("--max-stretch", type=float, default=1.25)
     ap.add_argument("--no-audio", action="store_true")
     ap.add_argument("--out", default=str(ROOT/"build/final.mp4"))
     a = ap.parse_args()
@@ -57,7 +65,11 @@ def main():
         if not clip.exists(): sys.exit(f"missing clip: {clip}")
         dur = s["end"] - s["start"]
         inputs += ["-i", str(clip)]
-        chains.append(f"[{i}:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},fps={fps},"
+        src = probe(clip); ratio = dur / src
+        stretch = f"setpts={ratio:.5f}*PTS," if 1.0 < ratio <= a.max_stretch else ""
+        if stretch: print(f"scene {s['id']}: {src:.2f}s -> {dur:.2f}s (slow {ratio:.2f}x)")
+        elif ratio > 1.0: print(f"scene {s['id']}: {src:.2f}s < {dur:.2f}s slot, holding last frame {dur-src:.2f}s")
+        chains.append(f"[{i}:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},{stretch}fps={fps},"
                       f"tpad=stop_mode=clone:stop_duration={dur},trim=duration={dur},setpts=PTS-STARTPTS,setsar=1[v{i}]")
     n = len(cfg["scenes"])
     chains.append("".join(f"[v{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[cat]")

@@ -26,3 +26,7 @@ Pipeline was tested end-to-end with synthetic clips (1080×1920, 60.0s, AAC).
 - Do the single motion test (scene 1) before committing the other nine.
 - Hop/clap sync: I can snap cut points to the beat grid (80 BPM = 0.75s/beat); number cues in scene 8 are placed on beats 2/4/6 of the scene.
 - Rainbow in scene 7 stays the five-color fantasy bridge (red, yellow, blue, green, purple), per brief.
+
+## Update: v1 references received
+`assets/refs/bunny-frog-reference-v1.webp` and `docs/character-spec-v1.md` (palette: fur #FFF9F0, overalls #368BDD, ears #F5B7C7, buttons #F7C948, frog #70BE69, belly #D8EFA9, dark #263047; Frog ≈ 1/3 Bunny height).
+Short clips (e.g. 5s) are now slowed evenly to fill a 6s slot (up to 1.25x, `--max-stretch`), not padded with a frozen second. Still awaiting: song file, vocal timings, motion-test clip.
