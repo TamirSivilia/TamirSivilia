@@ -1,0 +1,30 @@
+{
+  "title": "Bunny's Rainbow Hop",
+  "bpm": 80,
+  "size": [1080, 1920],
+  "fps": 30,
+  "note": "Times are the working plan. After the full song is generated, edit start/end per scene (and per line) to match measured vocals, then re-run tools/build.py. Any lyric edit must be logged in docs/lyrics_changes.md.",
+  "scenes": [
+    {"id": 1, "start": 0,  "end": 6,  "action": "Bunny peeks from giant flower; 3 colorful bubbles float toward camera",
+     "lines": ["Bunny, bunny, hop with me!", "What bright colors can you see?"], "word": null, "word_color": null},
+    {"id": 2, "start": 6,  "end": 12, "action": "Red apple bounces twice on the beat; Bunny follows in surprise",
+     "lines": ["Red, red, apple bright!", "Bounce it left and bounce it right!"], "word": "RED", "word_color": "#E53935", "word_at": 6.0},
+    {"id": 3, "start": 12, "end": 18, "action": "Friendly yellow sun peeks from behind a cloud; Bunny stretches paws up",
+     "lines": ["Yellow sunshine in the sky!", "Stretch your little paws up high!"], "word": "YELLOW", "word_color": "#FBC02D", "word_at": 12.0},
+    {"id": 4, "start": 18, "end": 24, "action": "Bunny taps foot in blue puddle; round drops jump like music notes",
+     "lines": ["Blue, blue, puddle play!", "Tap your toes and splash away!"], "word": "BLUE", "word_color": "#1E88E5", "word_at": 18.0},
+    {"id": 5, "start": 24, "end": 30, "action": "Green Frog on a leaf joins in small hops",
+     "lines": ["Green, green, froggy goes!", "Hop, hop, hop on tippy-toes!"], "word": "GREEN", "word_color": "#43A047", "word_at": 24.0},
+    {"id": 6, "start": 30, "end": 36, "action": "Purple butterfly lands on Bunny's nose; tickle scrunch; it flutters off",
+     "lines": ["Purple wings go flutter by!", "Wave your hands and say, ‘Hi, hi!’"], "word": "PURPLE", "word_color": "#8E24AA", "word_at": 30.0},
+    {"id": 7, "start": 36, "end": 42, "action": "Five colors form a fantasy rainbow bridge; Bunny points, colors glow on softly",
+     "lines": ["Colors, colors, here they glow!", "Make a lovely rainbow show!"], "word": null, "word_color": null},
+    {"id": 8, "start": 42, "end": 48, "action": "Three hops across colored stones; numbers 1,2,3 appear on landings",
+     "lines": ["One, two, three—come hop along!", "Clap your hands and sing our song!"], "word": null, "word_color": null,
+     "numbers": [{"n": "1", "at": 42.75}, {"n": "2", "at": 44.25}, {"n": "3", "at": 45.75}]},
+    {"id": 9, "start": 48, "end": 54, "action": "Bunny and Frog face viewer, clap, wiggle ears and arms",
+     "lines": ["Clap, clap, wiggle with me!", "Happy friends are you and me!"], "word": null, "word_color": null},
+    {"id": 10, "start": 54, "end": 60, "action": "Bunny waves and hops back into the flower; frame matches opening",
+     "lines": ["Bunny, bunny, round we go!", "Hop again—hello, hello!"], "word": null, "word_color": null}
+  ]
+}
